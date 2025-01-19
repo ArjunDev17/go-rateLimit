@@ -51,8 +51,8 @@ You can make a POST request to `/api/v1/onboard` with a JSON payload. For exampl
 
 ```json
 {
-  "name": "John",
-  "mobileNumber": "1234567890"
+  "name": "Arjun",
+  "mobileNumber": "9076782044"
 }
 ```
 
@@ -62,7 +62,7 @@ Assume the rate-limiting parameters are configured to allow **3 requests per 30 
 
 #### Example Request:
 ```bash
-curl -X POST http://localhost:8081/api/v1/onboard -d '{"name": "John", "mobileNumber": "1234567890"}' -H "Content-Type: application/json"
+curl -X POST http://localhost:8081/api/v1/onboard -d '{"name": "Arjun", "mobileNumber": "9076782044"}' -H "Content-Type: application/json"
 ```
 
 ### Rate Limiting Behavior
@@ -73,7 +73,7 @@ curl -X POST http://localhost:8081/api/v1/onboard -d '{"name": "John", "mobileNu
 ```json
 {
   "message": "User onboarded successfully!",
-  "mobile": "1234567890"
+  "mobile": "9076782044"
 }
 ```
 
@@ -131,10 +131,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 ### Notes:
-- Replace `yourusername` in the `git clone` command with your actual GitHub username.
+- Replace `ArjunDEv17` in the `git clone` command with your actual GitHub username.
 - Adjust the configuration in the `main.go` file as needed based on your requirements.
 - Ensure your server is running before testing API requests with tools like `curl` or Postman.
 
 ---
-
-This `README.md` provides a clear explanation of the repository’s functionality, setup instructions, and example use cases, making it easy for anyone to understand and use your rate-limiting implementation.
