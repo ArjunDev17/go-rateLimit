@@ -127,12 +127,3 @@ Contributions are welcome! Feel free to open an issue or submit a pull request f
 
 ### License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-### Notes:
-- Replace `ArjunDEv17` in the `git clone` command with your actual GitHub username.
-- Adjust the configuration in the `main.go` file as needed based on your requirements.
-- Ensure your server is running before testing API requests with tools like `curl` or Postman.
-
----
