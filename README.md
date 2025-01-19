@@ -1,7 +1,3 @@
-Here’s a detailed `README.md` file for your **go-rateLimit** repository:
-
----
-
 # go-rateLimit: Token Bucket Rate Limiting for Multiple Clients
 
 This repository implements a **Token Bucket** rate limiting algorithm in Go to handle **rate-limiting** for multiple clients. It allows for a specific number of requests to be made within a given time period (e.g., 3 requests every 30 seconds), with each client having independent rate limits based on unique identifiers (such as mobile numbers or IP addresses).
@@ -30,7 +26,7 @@ This repository implements a **Token Bucket** rate limiting algorithm in Go to h
 Clone this repository to your local machine using the following command:
 
 ```bash
-git clone https://github.com/yourusername/go-rateLimit.git
+git clone https://github.com/ArjunDev17/go-rateLimit.git
 cd go-rateLimit
 ```
 
