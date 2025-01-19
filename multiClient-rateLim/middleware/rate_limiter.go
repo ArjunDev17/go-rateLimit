@@ -1,6 +1,10 @@
 package middleware
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
 	"sync"
 	"time"
@@ -8,13 +12,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// TokenBucket represents a user's rate-limiting bucket
+// Person struct for extracting request body data
+type Person struct {
+	Name         string `json:"name"`
+	MobileNumber string `json:"mobileNumber"`
+}
+
+// TokenBucket struct for rate-limiting
 type TokenBucket struct {
 	Tokens         int       // Current number of tokens
 	LastRefillTime time.Time // Last time tokens were refilled
 }
 
-// RateLimiter manages token buckets for users
+// RateLimiter struct to manage rate-limiting
 type RateLimiter struct {
 	UserBuckets map[string]*TokenBucket
 	mu          sync.Mutex
@@ -23,7 +33,7 @@ type RateLimiter struct {
 	RefillCount int           // Tokens to refill per interval
 }
 
-// NewRateLimiter initializes the rate limiter
+// NewRateLimiter creates a new rate limiter
 func NewRateLimiter(capacity int, refillRate time.Duration, refillCount int) *RateLimiter {
 	return &RateLimiter{
 		UserBuckets: make(map[string]*TokenBucket),
@@ -35,13 +45,48 @@ func NewRateLimiter(capacity int, refillRate time.Duration, refillCount int) *Ra
 
 // LimitMiddleware applies rate-limiting
 func (rl *RateLimiter) LimitMiddleware() gin.HandlerFunc {
+
 	return func(c *gin.Context) {
 		if c.Request.Method != http.MethodPost {
 			c.Next() // Only limit POST requests
 			return
 		}
 
-		userID := c.ClientIP() // Use IP as user identifier (replace with Auth ID in production)
+		// Read the request body
+		body, err := io.ReadAll(c.Request.Body)
+		if err != nil {
+			fmt.Printf("%v\n", err)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Invalid request body.",
+			})
+			c.Abort()
+			return
+		}
+
+		// Rewind the body so it can be read by the handler
+		c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
+
+		// Proceed with rate-limiting logic
+		var payload Person
+		if err := json.Unmarshal(body, &payload); err != nil {
+			fmt.Printf("Error parsing JSON: %v\n", err)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Invalid or missing mobile number.",
+			})
+			c.Abort()
+			return
+		}
+
+		if payload.MobileNumber == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Mobile number is required.",
+			})
+			c.Abort()
+			return
+		}
+
+		// Use the mobile number as the user identifier for rate-limiting
+		userID := payload.MobileNumber
 
 		rl.mu.Lock()
 		defer rl.mu.Unlock()
@@ -78,6 +123,7 @@ func (rl *RateLimiter) LimitMiddleware() gin.HandlerFunc {
 	}
 }
 
+// Helper function to return the minimum of two integers
 func min(a, b int) int {
 	if a < b {
 		return a
